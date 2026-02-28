@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import get_settings
 from middleware import AuthMiddleware, LoggingMiddleware, RateLimitMiddleware
-from routers import auth_router, projects_router, generation_router, callsheet_router
+from routers import auth_router, projects_router, generation_router, callsheet_router, budget_router, shot_design_router, contacts_router
 from services.db_service import ensure_indexes
 
 # ── Logging setup ─────────────────────────────────────────────
@@ -59,6 +59,9 @@ app.include_router(auth_router)
 app.include_router(projects_router)
 app.include_router(generation_router)
 app.include_router(callsheet_router)
+app.include_router(budget_router)
+app.include_router(shot_design_router)
+app.include_router(contacts_router)
 
 
 # ── Health check ──────────────────────────────────────────────

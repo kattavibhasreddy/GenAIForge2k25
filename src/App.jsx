@@ -8,6 +8,9 @@ import StoryStudio from './pages/StoryStudio'
 import ProjectDashboard from './pages/ProjectDashboard'
 import CallSheet from './pages/CallSheet'
 import Storyboard from './pages/Storyboard'
+import Budget from './pages/Budget'
+import ShotDesigner from './pages/ShotDesigner'
+import Contacts from './pages/Contacts'
 
 // ── Route guard ──────────────────────────────────────────────
 function ProtectedRoute({ children }) {
@@ -48,6 +51,9 @@ function AnimatedRoutes() {
             <Route path="/project/:projectId" element={<ProtectedRoute><ProjectDashboard /></ProtectedRoute>} />
             <Route path="/project/:projectId/callsheet" element={<ProtectedRoute><CallSheet /></ProtectedRoute>} />
             <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
+            <Route path="/project/:projectId/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+            <Route path="/project/:projectId/shot-designer" element={<ProtectedRoute><ShotDesigner /></ProtectedRoute>} />
+            <Route path="/project/:projectId/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
             <Route path="/studio" element={<ProtectedRoute><StoryStudio /></ProtectedRoute>} />
         </Routes>
     )

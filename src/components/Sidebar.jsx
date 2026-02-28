@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Clapperboard, ArrowLeft, LogOut, Folder, ChevronLeft, ChevronRight, Sparkles, Film, Users, Camera } from 'lucide-react'
+import { LayoutDashboard, Clapperboard, ArrowLeft, LogOut, Folder, ChevronLeft, ChevronRight, Sparkles, Film, Users, Camera, DollarSign, Crosshair, Contact } from 'lucide-react'
 import useCineStore from '../store/useCineStore'
 import useAuthStore from '../store/useAuthStore'
 
@@ -84,6 +84,9 @@ export default function Sidebar() {
                         { path: `/project/${activeProjectId}`, label: 'Project', icon: Film },
                         { path: `/project/${activeProjectId}/callsheet`, label: 'Call Sheet', icon: Users },
                         { path: '/storyboard', label: 'Storyboard', icon: Camera },
+                        { path: `/project/${activeProjectId}/budget`, label: 'Budget', icon: DollarSign },
+                        { path: `/project/${activeProjectId}/shot-designer`, label: 'Shot Designer', icon: Crosshair },
+                        { path: `/project/${activeProjectId}/contacts`, label: 'Contacts', icon: Contact },
                     ] : []),
                     ...baseNavItems.slice(1),
                 ].map(({ path, label, icon: Icon }) => {

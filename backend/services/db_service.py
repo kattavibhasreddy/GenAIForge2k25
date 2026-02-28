@@ -210,6 +210,166 @@ def delete_callsheet_entry(entry_id: str) -> bool:
     return result.deleted_count > 0
 
 
+# ── Budget ────────────────────────────────────────────────────
+
+def create_budget_item(project_id: str, data: dict) -> dict:
+    """Add a budget line item to a project."""
+    db = get_db()
+    doc = {
+        "project_id": project_id,
+        "category_id": data["category_id"],
+        "category_name": data["category_name"],
+        "item_id": data["item_id"],
+        "item_name": data["item_name"],
+        "qty": data.get("qty", 0),
+        "units": data.get("units", 0),
+        "rate": data.get("rate", 0),
+        "fringes": data.get("fringes", 0),
+        "estimated": data.get("estimated", 0),
+        "actual": data.get("actual", 0),
+        "paid": data.get("paid", 0),
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    result = db.budget.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return _serialize(doc)
+
+
+def get_budget(project_id: str) -> list:
+    """Return all budget items for a project."""
+    db = get_db()
+    cursor = db.budget.find({"project_id": project_id}).sort("created_at", 1)
+    return [_serialize(doc) for doc in cursor]
+
+
+def update_budget_item(item_id: str, data: dict) -> dict | None:
+    """Update a budget item by its id."""
+    db = get_db()
+    update_fields = {}
+    for key in ("category_id", "category_name", "item_id", "item_name",
+                "qty", "units", "rate", "fringes", "estimated", "actual", "paid"):
+        if key in data:
+            update_fields[key] = data[key]
+    if not update_fields:
+        return None
+    db.budget.update_one({"_id": ObjectId(item_id)}, {"$set": update_fields})
+    doc = db.budget.find_one({"_id": ObjectId(item_id)})
+    return _serialize(doc) if doc else None
+
+
+def delete_budget_item(item_id: str) -> bool:
+    """Delete a budget item."""
+    db = get_db()
+    result = db.budget.delete_one({"_id": ObjectId(item_id)})
+    return result.deleted_count > 0
+
+
+# ── Shot Design CRUD ─────────────────────────────────────────
+
+def create_shot_design(project_id: str, data: dict) -> dict:
+    """Create a new shot design for a project."""
+    db = get_db()
+    doc = {
+        "project_id": project_id,
+        "scene_name": data.get("scene_name", "Scene 1"),
+        "shot_label": data.get("shot_label", "Shot 1"),
+        "canvas_width": data.get("canvas_width", 800),
+        "canvas_height": data.get("canvas_height", 600),
+        "elements": data.get("elements", []),
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+    }
+    result = db.shot_designs.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return _serialize(doc)
+
+
+def get_shot_designs(project_id: str) -> List[dict]:
+    """Get all shot designs for a project."""
+    db = get_db()
+    docs = db.shot_designs.find({"project_id": project_id}).sort("created_at", 1)
+    return [_serialize(d) for d in docs]
+
+
+def get_shot_design(design_id: str) -> Optional[dict]:
+    """Get a single shot design by its ID."""
+    db = get_db()
+    doc = db.shot_designs.find_one({"_id": ObjectId(design_id)})
+    return _serialize(doc) if doc else None
+
+
+def update_shot_design(design_id: str, data: dict) -> Optional[dict]:
+    """Update fields of a shot design."""
+    db = get_db()
+    update_fields = {"updated_at": datetime.now(timezone.utc)}
+    for key in ("scene_name", "shot_label", "canvas_width", "canvas_height", "elements"):
+        if key in data:
+            update_fields[key] = data[key]
+    db.shot_designs.update_one({"_id": ObjectId(design_id)}, {"$set": update_fields})
+    doc = db.shot_designs.find_one({"_id": ObjectId(design_id)})
+    return _serialize(doc) if doc else None
+
+
+def delete_shot_design(design_id: str) -> bool:
+    """Delete a shot design."""
+    db = get_db()
+    result = db.shot_designs.delete_one({"_id": ObjectId(design_id)})
+    return result.deleted_count > 0
+
+
+# ── Contact CRUD ─────────────────────────────────────────────
+
+def create_contact(project_id: str, data: dict) -> dict:
+    """Create a new contact for a project."""
+    db = get_db()
+    doc = {
+        "project_id": project_id,
+        "title": data.get("title", ""),
+        "name": data.get("name", ""),
+        "mobile": data.get("mobile", ""),
+        "alternate_mobile": data.get("alternate_mobile", ""),
+        "email": data.get("email", ""),
+        "company": data.get("company", ""),
+        "category": data.get("category", "Crew"),
+        "notes": data.get("notes", ""),
+        "picture_url": data.get("picture_url", ""),
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+    }
+    result = db.contacts.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return _serialize(doc)
+
+
+def get_contacts(project_id: str) -> List[dict]:
+    """Get all contacts for a project."""
+    db = get_db()
+    docs = db.contacts.find({"project_id": project_id}).sort("name", 1)
+    return [_serialize(d) for d in docs]
+
+
+def update_contact(contact_id: str, data: dict) -> Optional[dict]:
+    """Update fields of a contact."""
+    db = get_db()
+    update_fields = {"updated_at": datetime.now(timezone.utc)}
+    for key in ("title", "name", "mobile", "alternate_mobile", "email",
+                "company", "category", "notes", "picture_url"):
+        if key in data:
+            update_fields[key] = data[key]
+    if len(update_fields) <= 1:
+        return None
+    db.contacts.update_one({"_id": ObjectId(contact_id)}, {"$set": update_fields})
+    doc = db.contacts.find_one({"_id": ObjectId(contact_id)})
+    return _serialize(doc) if doc else None
+
+
+def delete_contact(contact_id: str) -> bool:
+    """Delete a contact."""
+    db = get_db()
+    result = db.contacts.delete_one({"_id": ObjectId(contact_id)})
+    return result.deleted_count > 0
+
+
 # ── Indexes (called once on startup) ─────────────────────────
 
 def ensure_indexes():
@@ -218,3 +378,8 @@ def ensure_indexes():
     db.projects.create_index("user_id")
     db.generations.create_index([("project_id", 1), ("created_at", -1)])
     db.callsheet.create_index("project_id")
+    db.budget.create_index("project_id")
+    db.shot_designs.create_index("project_id")
+    db.contacts.create_index("project_id")
+
+

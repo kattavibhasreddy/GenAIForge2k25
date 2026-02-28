@@ -132,3 +132,57 @@ export async function apiGenerateStoryboard(shotDesign) {
 export async function apiSaveScreenplay(generationId, screenplay) {
     return request('PUT', `/generate/${generationId}/screenplay`, { screenplay })
 }
+
+// ── Budget ───────────────────────────────────────────────────
+export async function apiGetBudget(projectId) {
+    const data = await request('GET', `/budget/${projectId}`)
+    return data.items || []
+}
+
+export async function apiAddBudgetItem(projectId, data) {
+    return request('POST', `/budget/${projectId}`, data)
+}
+
+export async function apiUpdateBudgetItem(itemId, data) {
+    return request('PUT', `/budget/item/${itemId}`, data)
+}
+
+export async function apiDeleteBudgetItem(itemId) {
+    return request('DELETE', `/budget/item/${itemId}`)
+}
+
+// ── Shot Design ─────────────────────────────────────────────
+export async function apiGetShotDesigns(projectId) {
+    const data = await request('GET', `/shot-design/${projectId}`)
+    return data.designs || []
+}
+
+export async function apiCreateShotDesign(projectId, data) {
+    return request('POST', `/shot-design/${projectId}`, data)
+}
+
+export async function apiUpdateShotDesign(projectId, designId, data) {
+    return request('PUT', `/shot-design/${projectId}/${designId}`, data)
+}
+
+export async function apiDeleteShotDesign(projectId, designId) {
+    return request('DELETE', `/shot-design/${projectId}/${designId}`)
+}
+
+// ── Contacts ────────────────────────────────────────────────
+export async function apiGetContacts(projectId) {
+    const data = await request('GET', `/contacts/${projectId}`)
+    return data.contacts || []
+}
+
+export async function apiCreateContact(projectId, data) {
+    return request('POST', `/contacts/${projectId}`, data)
+}
+
+export async function apiUpdateContact(projectId, contactId, data) {
+    return request('PUT', `/contacts/${projectId}/${contactId}`, data)
+}
+
+export async function apiDeleteContact(projectId, contactId) {
+    return request('DELETE', `/contacts/${projectId}/${contactId}`)
+}
